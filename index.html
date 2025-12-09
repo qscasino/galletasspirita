@@ -745,8 +745,8 @@
       }, 1000);
 
       // Guardar en localStorage que ya jugó hoy
-      localStorage.setItem('fortuneCookieLastPlayed', new Date().toDateString());
-      localStorage.setItem('fortuneCookiePrize', JSON.stringify(prize));
+      localStorage.setItem('fortuneCookieLastPlayed_SPIRITA', new Date().toDateString());
+      localStorage.setItem('fortuneCookiePrize_SPIRITA', JSON.stringify(prize));
     }
 
     // Mostrar mensaje de fortuna y luego premio
@@ -811,7 +811,7 @@
 
     // Verificar si ya jugó hoy
     function checkIfAlreadyPlayed() {
-      const lastPlayed = localStorage.getItem('fortuneCookieLastPlayed');
+      const lastPlayed = localStorage.getItem('fortuneCookieLastPlayed_SPIRITA');
       const today = new Date().toDateString();
 
       if (lastPlayed === today) {
@@ -822,7 +822,7 @@
         });
 
         // Mostrar premio ganado
-        const savedPrize = JSON.parse(localStorage.getItem('fortuneCookiePrize'));
+        const savedPrize = JSON.parse(localStorage.getItem('fortuneCookiePrize_SPIRITA'));
         if (savedPrize) {
           alreadyPlayed.innerHTML = `
             Ya abriste tu Galleta de la Abundancia por hoy.<br>
