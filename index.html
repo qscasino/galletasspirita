@@ -1,1 +1,852 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galletas de la Abundancia - Arkana Games</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Poppins:wght@300;400;600;700&display=swap');
 
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #8B1538 0%, #5A0A1F 50%, #3D0614 100%);
+      color: #fff;
+      overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Partículas de fondo */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .particle {
+      position: absolute;
+      background: radial-gradient(circle, rgba(255, 215, 0, 0.8), transparent);
+      border-radius: 50%;
+      animation: float 8s infinite ease-in-out;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) translateX(0); opacity: 0.3; }
+      50% { transform: translateY(-100px) translateX(50px); opacity: 0.8; }
+    }
+
+    /* Pantalla de carga */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #8B1538 0%, #3D0614 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+
+    .loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loading-logo {
+      width: 200px;
+      height: 200px;
+      margin-bottom: 30px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .loading-bar-container {
+      width: 300px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .loading-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #FFD700, #FFA500, #FFD700);
+      border-radius: 10px;
+      animation: loading 2s ease-in-out;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    }
+
+    @keyframes loading {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+
+    /* Contenedor principal */
+    .container {
+      position: relative;
+      z-index: 2;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+    }
+
+    /* Header */
+    .header {
+      margin-bottom: 10px;
+    }
+
+    .logo {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 5px;
+    }
+
+    .promo-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #228B22, #006400);
+      color: #FFD700;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 15px rgba(34, 139, 34, 0.4);
+      margin-bottom: 10px;
+    }
+
+    .promo-badge::before {
+      content: '🎄 ';
+    }
+
+    .promo-badge::after {
+      content: ' 🎄';
+    }
+
+    /* Título */
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #FFD700, #FFA500, #FFD700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+      margin-bottom: 8px;
+      letter-spacing: 2px;
+    }
+
+    h1::before {
+      content: '🍪 ';
+    }
+
+    h1::after {
+      content: ' 🍪';
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: #FFE4B5;
+      margin-bottom: 20px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.4;
+    }
+
+    /* Mesa de casino */
+    .casino-table {
+      background: linear-gradient(135deg, #1a5d1a 0%, #0d3d0d 100%);
+      border-radius: 150px;
+      padding: 40px 30px;
+      margin: 20px auto;
+      max-width: 750px;
+      position: relative;
+      box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.6),
+        inset 0 0 50px rgba(0, 0, 0, 0.3),
+        0 0 0 10px #8B4513,
+        0 0 0 14px #654321;
+    }
+
+    .casino-table::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 95%;
+      height: 95%;
+      border: 3px dashed rgba(255, 215, 0, 0.3);
+      border-radius: 150px;
+      pointer-events: none;
+    }
+
+    /* Galletas */
+    .cookies-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 10;
+    }
+
+    .cookie-wrapper {
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .cookie-wrapper:hover:not(.disabled) {
+      transform: translateY(-10px) scale(1.05);
+    }
+
+    .cookie-wrapper.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      filter: grayscale(0.5);
+    }
+
+    .cookie {
+      width: 100px;
+      height: 100px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .cookie-closed {
+      width: 100%;
+      height: 100%;
+      /* Updated to look like chocolate chip cookies */
+      background: 
+        radial-gradient(circle at 20% 30%, #8B4513 4%, transparent 4%),
+        radial-gradient(circle at 45% 25%, #654321 5%, transparent 5%),
+        radial-gradient(circle at 70% 40%, #8B4513 6%, transparent 6%),
+        radial-gradient(circle at 30% 55%, #654321 4%, transparent 4%),
+        radial-gradient(circle at 60% 60%, #8B4513 5%, transparent 5%),
+        radial-gradient(circle at 80% 70%, #654321 4%, transparent 4%),
+        radial-gradient(circle at 25% 75%, #8B4513 6%, transparent 6%),
+        radial-gradient(circle at 55% 80%, #654321 5%, transparent 5%),
+        radial-gradient(circle at 85% 20%, #8B4513 4%, transparent 4%),
+        radial-gradient(circle at 15% 45%, #654321 5%, transparent 5%),
+        linear-gradient(135deg, #E8C89F 0%, #D4A76A 40%, #C19A6B 70%, #A67C52 100%);
+      border-radius: 50%;
+      position: relative;
+      box-shadow: 
+        0 8px 20px rgba(0, 0, 0, 0.4),
+        inset -3px -3px 8px rgba(139, 69, 19, 0.3),
+        inset 3px 3px 8px rgba(255, 248, 220, 0.4);
+      border: none;
+    }
+
+    .cookie-closed::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      /* Added texture for realistic cookie surface */
+      background: 
+        radial-gradient(circle at 40% 40%, rgba(210, 180, 140, 0.3) 1px, transparent 1px),
+        radial-gradient(circle at 60% 50%, rgba(210, 180, 140, 0.3) 1px, transparent 1px),
+        radial-gradient(circle at 30% 70%, rgba(210, 180, 140, 0.3) 1px, transparent 1px);
+      background-size: 5px 5px, 7px 7px, 6px 6px;
+      border-radius: 50%;
+      opacity: 0.6;
+    }
+
+    .cookie-closed::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      /* Enhanced highlight for baked cookie appearance */
+      background: radial-gradient(ellipse at 35% 35%, rgba(255, 248, 220, 0.5), transparent 50%);
+      border-radius: 50%;
+      top: 0;
+      left: 0;
+    }
+
+    .cookie-label {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #FFD700;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Animación de apertura */
+    @keyframes crackCookie {
+      0% { transform: scale(1) rotate(0deg); }
+      25% { transform: scale(1.1) rotate(-5deg); }
+      50% { transform: scale(1.15) rotate(5deg); }
+      75% { transform: scale(1.1) rotate(-3deg); }
+      100% { transform: scale(1.2) rotate(0deg); opacity: 0; }
+    }
+
+    .cookie-wrapper.opening .cookie-closed {
+      animation: crackCookie 0.8s ease-out forwards;
+    }
+
+    /* Modal de premio */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal {
+      background: linear-gradient(135deg, #8B1538, #5A0A1F);
+      border-radius: 30px;
+      padding: 50px 40px;
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+      box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.8),
+        0 0 0 8px #FFD700,
+        0 0 30px rgba(255, 215, 0, 0.5);
+      animation: slideUp 0.5s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .fortune-message {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-style: italic;
+      color: #FFE4B5;
+      margin-bottom: 30px;
+      line-height: 1.6;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      border: 2px solid rgba(255, 215, 0, 0.3);
+    }
+
+    .prize-reveal {
+      margin: 30px 0;
+    }
+
+    .prize-emoji {
+      font-size: 5rem;
+      animation: bounce 1s infinite;
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .prize-text {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #FFD700;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+      margin-bottom: 15px;
+    }
+
+    .prize-description {
+      font-size: 1.1rem;
+      color: #FFE4B5;
+      margin-bottom: 30px;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      color: white;
+      padding: 18px 40px;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(37, 211, 102, 0.6);
+    }
+
+    .cta-button::before {
+      content: '💬 ';
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .close-modal:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: rotate(90deg);
+    }
+
+    /* Mensaje de ya jugado */
+    .already-played {
+      background: rgba(255, 215, 0, 0.2);
+      border: 2px solid #FFD700;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 30px auto;
+      max-width: 600px;
+      font-size: 1.1rem;
+      color: #FFE4B5;
+    }
+
+    .already-played::before {
+      content: '✨ ';
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .subtitle {
+        font-size: 0.9rem;
+      }
+
+      .casino-table {
+        padding: 30px 15px;
+      }
+
+      .cookies-container {
+        gap: 15px;
+      }
+
+      .cookie {
+        width: 85px;
+        height: 85px;
+      }
+
+      .modal {
+        padding: 40px 30px;
+      }
+
+      .prize-text {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Pantalla de carga -->
+  <div class="loading-screen" id="loadingScreen">
+    <img src="/images/image.png" alt="Arkana Games" class="loading-logo">
+    <div class="loading-bar-container">
+      <div class="loading-bar"></div>
+    </div>
+  </div>
+
+  <!-- Partículas de fondo -->
+  <div class="particles" id="particles"></div>
+
+  <!-- Contenido principal -->
+  <div class="container">
+    <div class="header">
+      <img src="/images/image.png" alt="Arkana Games" class="logo">
+      <div class="promo-badge">PROMOCIÓN ESPECIAL DE NAVIDAD</div>
+    </div>
+
+    <h1>GALLETAS DE LA ABUNDANCIA</h1>
+    <p class="subtitle">
+      Elegí una galleta, rompela y descubrí qué bono te tocó. Una sola elección por día. ¡La suerte está de tu lado!
+    </p>
+
+    <div class="casino-table">
+      <div class="cookies-container" id="cookiesContainer">
+        <!-- Las galletas se generarán con JavaScript -->
+      </div>
+    </div>
+
+    <div class="already-played" id="alreadyPlayed" style="display: none;">
+      Ya abriste tu Galleta de la Abundancia por hoy. Volvé mañana para una nueva oportunidad.
+    </div>
+  </div>
+
+  <!-- Modal de premio -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <button class="close-modal" id="closeModal">&times;</button>
+      
+      <div class="fortune-message" id="fortuneMessage"></div>
+      
+      <div class="prize-reveal">
+        <span class="prize-emoji" id="prizeEmoji"></span>
+        <div class="prize-text" id="prizeText"></div>
+        <div class="prize-description" id="prizeDescription"></div>
+      </div>
+
+      <button class="cta-button" id="ctaButton">
+        Enviá captura por WhatsApp para reclamar
+      </button>
+    </div>
+  </div>
+
+  <!-- Confetti -->
+  <canvas id="confetti" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999;"></canvas>
+
+  <script>
+    // Datos de premios
+    const prizes = [
+      {
+        id: 1,
+        name: '150% Bono Extra',
+        emoji: '🎁',
+        description: '¡Felicitaciones! Ganaste un bono del 150% en tu próximo depósito.',
+        fortune: '"La fortuna sonríe a los valientes. Tu audacia será recompensada."'
+      },
+      {
+        id: 2,
+        name: '100% Bono',
+        emoji: '💰',
+        description: 'Excelente elección. Ganaste un bono del 100% en tu próximo depósito.',
+        fortune: '"El camino al éxito está lleno de oportunidades. Esta es una de ellas."'
+      },
+      {
+        id: 3,
+        name: '200% Bono Mega',
+        emoji: '🌟',
+        description: '¡Increíble! Ganaste el premio mayor: 200% de bono en tu próximo depósito.',
+        fortune: '"Las estrellas se alinean a tu favor. La abundancia te espera."'
+      },
+      {
+        id: 4,
+        name: 'Bono a Elección',
+        emoji: '🎯',
+        description: '¡Fantástico! Podés elegir el bono que más te convenga. Consultanos para más detalles.',
+        fortune: '"El poder de elegir tu destino está en tus manos."'
+      },
+      {
+        id: 5,
+        name: 'Bono Sorpresa',
+        emoji: '🎊',
+        description: '¡Misterioso! Ganaste un bono sorpresa. Consultanos para descubrir cuál es.',
+        fortune: '"Los mejores regalos son los inesperados. Prepárate para la sorpresa."'
+      }
+    ];
+
+    // Elementos del DOM
+    const loadingScreen = document.getElementById('loadingScreen');
+    const cookiesContainer = document.getElementById('cookiesContainer');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const closeModal = document.getElementById('closeModal');
+    const ctaButton = document.getElementById('ctaButton');
+    const alreadyPlayed = document.getElementById('alreadyPlayed');
+    const fortuneMessage = document.getElementById('fortuneMessage');
+    const prizeEmoji = document.getElementById('prizeEmoji');
+    const prizeText = document.getElementById('prizeText');
+    const prizeDescription = document.getElementById('prizeDescription');
+
+    // Audio
+    let backgroundMusic;
+    let bellSound;
+    let prizeSound;
+
+    // Inicializar audio
+    function initAudio() {
+      backgroundMusic = new Audio('/assets/background-music.mp3');
+      backgroundMusic.loop = true;
+      backgroundMusic.volume = 0.3;
+
+      bellSound = new Audio('/assets/bell-sound.mp3');
+      bellSound.volume = 0.5;
+
+      prizeSound = new Audio('/assets/prize-sound.mp3');
+      prizeSound.volume = 0.6;
+    }
+
+    // Crear partículas de fondo
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      for (let i = 0; i < 30; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.width = (Math.random() * 4 + 2) + 'px';
+        particle.style.height = particle.style.width;
+        particle.style.animationDelay = Math.random() * 8 + 's';
+        particle.style.animationDuration = (Math.random() * 5 + 5) + 's';
+        particlesContainer.appendChild(particle);
+      }
+    }
+
+    // Confetti
+    function createConfetti() {
+      const canvas = document.getElementById('confetti');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const confettiPieces = [];
+      const confettiCount = 150;
+      const colors = ['#FFD700', '#FFA500', '#FF6347', '#32CD32', '#1E90FF', '#FF1493'];
+
+      for (let i = 0; i < confettiCount; i++) {
+        confettiPieces.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          w: Math.random() * 10 + 5,
+          h: Math.random() * 5 + 5,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          speedX: Math.random() * 3 - 1.5,
+          speedY: Math.random() * 3 + 3,
+          rotation: Math.random() * 360,
+          rotationSpeed: Math.random() * 10 - 5
+        });
+      }
+
+      function drawConfetti() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        confettiPieces.forEach((piece, index) => {
+          ctx.save();
+          ctx.translate(piece.x, piece.y);
+          ctx.rotate(piece.rotation * Math.PI / 180);
+          ctx.fillStyle = piece.color;
+          ctx.fillRect(-piece.w / 2, -piece.h / 2, piece.w, piece.h);
+          ctx.restore();
+
+          piece.x += piece.speedX;
+          piece.y += piece.speedY;
+          piece.rotation += piece.rotationSpeed;
+
+          if (piece.y > canvas.height) {
+            confettiPieces.splice(index, 1);
+          }
+        });
+
+        if (confettiPieces.length > 0) {
+          requestAnimationFrame(drawConfetti);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+
+      drawConfetti();
+    }
+
+    // Generar galletas
+    function generateCookies() {
+      // Mezclar premios aleatoriamente
+      const shuffledPrizes = [...prizes].sort(() => Math.random() - 0.5);
+
+      shuffledPrizes.forEach((prize, index) => {
+        const cookieWrapper = document.createElement('div');
+        cookieWrapper.className = 'cookie-wrapper';
+        cookieWrapper.dataset.prizeId = prize.id;
+        cookieWrapper.dataset.prizeData = JSON.stringify(prize);
+
+        cookieWrapper.innerHTML = `
+          <div class="cookie">
+            <div class="cookie-closed"></div>
+          </div>
+          <div class="cookie-label">Galleta ${index + 1}</div>
+        `;
+
+        cookieWrapper.addEventListener('click', () => handleCookieClick(cookieWrapper, prize));
+        cookiesContainer.appendChild(cookieWrapper);
+      });
+    }
+
+    // Manejar clic en galleta
+    function handleCookieClick(cookieWrapper, prize) {
+      if (cookieWrapper.classList.contains('disabled')) return;
+
+      // Detener música de fondo
+      backgroundMusic.pause();
+
+      // Reproducir sonido de campana
+      bellSound.play();
+
+      // Animar apertura de galleta
+      cookieWrapper.classList.add('opening');
+
+      // Deshabilitar todas las galletas
+      document.querySelectorAll('.cookie-wrapper').forEach(wrapper => {
+        wrapper.classList.add('disabled');
+      });
+
+      // Esperar animación y mostrar fortuna
+      setTimeout(() => {
+        showFortune(prize);
+      }, 1000);
+
+      // Guardar en localStorage que ya jugó hoy
+      localStorage.setItem('fortuneCookieLastPlayed', new Date().toDateString());
+      localStorage.setItem('fortuneCookiePrize', JSON.stringify(prize));
+    }
+
+    // Mostrar mensaje de fortuna y luego premio
+    function showFortune(prize) {
+      fortuneMessage.textContent = prize.fortune;
+      prizeEmoji.textContent = '';
+      prizeText.textContent = '';
+      prizeDescription.textContent = '';
+      
+      modalOverlay.classList.add('show');
+
+      // Después de 2 segundos, mostrar el premio
+      setTimeout(() => {
+        revealPrize(prize);
+      }, 2500);
+    }
+
+    // Revelar premio
+    function revealPrize(prize) {
+      // Detener sonido de campana
+      bellSound.pause();
+      bellSound.currentTime = 0;
+
+      // Reproducir sonido de premio
+      prizeSound.play();
+
+      // Mostrar confetti
+      createConfetti();
+
+      // Actualizar contenido del modal
+      prizeEmoji.textContent = prize.emoji;
+      prizeText.textContent = `Te tocó: ${prize.name}`;
+      prizeDescription.textContent = prize.description;
+    }
+
+    // Cerrar modal
+    function handleCloseModal() {
+      modalOverlay.classList.remove('show');
+      
+      // Detener sonido de premio
+      prizeSound.pause();
+      prizeSound.currentTime = 0;
+
+      // Reanudar música de fondo
+      backgroundMusic.play();
+
+      // Mostrar mensaje de ya jugado
+      alreadyPlayed.style.display = 'block';
+    }
+
+    closeModal.addEventListener('click', handleCloseModal);
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) {
+        handleCloseModal();
+      }
+    });
+
+    ctaButton.addEventListener('click', () => {
+      // Aquí puedes agregar el link de WhatsApp si lo necesitas
+      alert('Por favor, tomá captura de pantalla y enviala por WhatsApp para reclamar tu premio.');
+    });
+
+    // Verificar si ya jugó hoy
+    function checkIfAlreadyPlayed() {
+      const lastPlayed = localStorage.getItem('fortuneCookieLastPlayed');
+      const today = new Date().toDateString();
+
+      if (lastPlayed === today) {
+        // Ya jugó hoy
+        alreadyPlayed.style.display = 'block';
+        document.querySelectorAll('.cookie-wrapper').forEach(wrapper => {
+          wrapper.classList.add('disabled');
+        });
+
+        // Mostrar premio ganado
+        const savedPrize = JSON.parse(localStorage.getItem('fortuneCookiePrize'));
+        if (savedPrize) {
+          alreadyPlayed.innerHTML = `
+            Ya abriste tu Galleta de la Abundancia por hoy.<br>
+            <strong>Tu premio: ${savedPrize.name} ${savedPrize.emoji}</strong><br>
+            Volvé mañana para una nueva oportunidad.
+          `;
+        }
+      }
+    }
+
+    // Inicialización
+    window.addEventListener('load', () => {
+      // Crear partículas
+      createParticles();
+
+      // Inicializar audio
+      initAudio();
+
+      // Generar galletas
+      generateCookies();
+
+      // Verificar si ya jugó
+      checkIfAlreadyPlayed();
+
+      // Ocultar pantalla de carga y reproducir música
+      setTimeout(() => {
+        loadingScreen.classList.add('hidden');
+        backgroundMusic.play().catch(err => {
+          console.log('Error al reproducir audio:', err);
+        });
+      }, 2000);
+    });
+  </script>
+</body>
+</html>
